@@ -17,30 +17,63 @@ public class Process {
     public int tier = 1;           // ACS only: 1 = Round Robin, 2 = Priority
     public int waitingSince = -1;  // ACS only: time the process entered Tier 2 (used for aging)
 
-    /** TODO Member 4: assign the inputs; remaining = burst; effectivePriority = priority. */
+    /**
+     * TODO Member 4: assign the inputs; remaining = burst; effectivePriority = priority.
+     */
     public Process(int id, int arrival, int burst, int priority) {
-        this.id = id; this.arrival = arrival; this.burst = burst; this.priority = priority;
-        // TODO Member 4: initialise remaining and effectivePriority
+
+        this.id = id;
+        this.arrival = arrival;
+        this.burst = burst;
+        this.priority = priority;
+
+        this.remaining = burst;
+        this.effectivePriority = priority;
+
+
     }
 
-    /** TODO Member 4: return a fresh copy built from the ORIGINAL inputs (id, arrival, burst, priority). */
-    public Process copy() { throw new UnsupportedOperationException("TODO Member 4"); }
+    public Process copy() {
+        return new Process(id, arrival, burst, priority);
+    }
 
-    /** TODO Member 4: copy every process in the list (schedulers call this first so the input is never modified). */
-    public static List<Process> copyAll(List<Process> list) { throw new UnsupportedOperationException("TODO Member 4"); }
 
-    /** TODO Member 4: "P" + id */
-    public String name() { throw new UnsupportedOperationException("TODO Member 4"); }
+    public static List<Process> copyAll(List<Process> list) {
+        List<Process> copies = new ArrayList<>();
 
-    /** TODO Member 4: Turnaround = finish - arrival */
-    public int turnaround() { throw new UnsupportedOperationException("TODO Member 4"); }
+        for (Process p : list) {
+            copies.add(p.copy());
+        }
 
-    /** TODO Member 4: Waiting = turnaround - burst */
-    public int waiting() { throw new UnsupportedOperationException("TODO Member 4"); }
+        return copies;
+    }
 
-    /** TODO Member 4: Response = firstStart - arrival */
-    public int response() { throw new UnsupportedOperationException("TODO Member 4"); }
+    public String name() {
+        return "P" + id;
+    }
 
-    /** TODO Member 4: format used in the per-step queue output, e.g. "P1 (remaining: 4, Priority: 2)" (use effectivePriority). */
-    @Override public String toString() { throw new UnsupportedOperationException("TODO Member 4"); }
+    public int turnaround() {
+        return finish - arrival;
+    }
+
+    public int waiting() {
+        return turnaround() - burst;
+    }
+
+    public int response() {
+        return firstStart - arrival;
+    }
+
+    @Override
+    public String toString() {
+        return name() +
+                " (remaining: " + remaining +
+                ", Priority: " + effectivePriority + ")";
+    }
 }
+
+
+
+
+
+
