@@ -30,34 +30,27 @@ public class ACS implements Scheduler {
     @Override
     public SimulationResult run(List<Process> input, int quantum, int cs) {
 
-        // Step 1: Validate the input
         if (quantum <= 0 || cs < 0) {
             throw new IllegalArgumentException(
                     "Quantum must be positive and CS cannot be negative"
             );
         }
 
-        // Step 2: Copy the processes
         List<Process> processes = Process.copyAll(input);
 
-        // Step 3: Create the two tiers
         ACSTier1 tier1 = new ACSTier1();
         ACSTier2 tier2 = new ACSTier2();
 
-        // Step 4: Create the result object
         SimulationResult result = new SimulationResult("ACS");
 
-        // Step 5: Initialize the simulation clock
         int time = 0;
 
-        // Step 6: Remember the previously running process
         Process lastRun = null;
 
         Set<Process> admitted = new HashSet<>();
 
         while (result.processes.size() < processes.size()) {
 
-            // Add newly arrived processes
             for (Process p : processes) {
                 if (p.arrival <= time && !admitted.contains(p)) {
                     tier1.add(p);
@@ -65,7 +58,6 @@ public class ACS implements Scheduler {
                 }
             }
 
-            // Take the snapshot BEFORE picking the next process (the picked process is still inside the queues)
             tier2.applyAging(time);
             List<Process> snapT1 = tier1.view();
             List<Process> snapT2 = tier2.view();
@@ -89,15 +81,13 @@ public class ACS implements Scheduler {
                 lastRun = null;
                 continue;
             }
-
-            // Context Switch
+            
             if (lastRun != null && lastRun != next && cs > 0) {
 
                 int csStart = time;
 
                 for (int i = 0; i < cs; i++) {
 
-                    // Add newly arrived processes
                     for (Process p : processes) {
                         if (p.arrival <= time && !admitted.contains(p)) {
                             tier1.add(p);
@@ -105,10 +95,8 @@ public class ACS implements Scheduler {
                         }
                     }
 
-                    // Apply aging
                     tier2.applyAging(time);
 
-                    // Record context switch step
                     if (!snapshotUsed) {
                         result.addStep(time, "CS", snapT1, snapT2);
                         snapshotUsed = true;
@@ -122,14 +110,10 @@ public class ACS implements Scheduler {
                 result.addSegment("CS", csStart, time);
             }
 
-
-
-            // Record first start time
             if (next.firstStart == -1) {
                 next.firstStart = time;
             }
 
-            // Calculate how long the process will run
             int runLength;
 
             if (fromTier1) {
@@ -139,13 +123,11 @@ public class ACS implements Scheduler {
                 runLength = next.remaining;
             }
 
-            // Execute the process
             int runStart = time;
             int used = 0;
 
             while (used < runLength) {
 
-                // Add processes that arrived during execution
                 for (Process p : processes) {
                     if (p.arrival <= time && !admitted.contains(p)) {
                         tier1.add(p);
@@ -153,10 +135,8 @@ public class ACS implements Scheduler {
                     }
                 }
 
-                // Apply aging before recording the current step
                 tier2.applyAging(time);
 
-                // Record current simulation state
                 if (!snapshotUsed) {
                     result.addStep(time, next.name(), snapT1, snapT2);
                     snapshotUsed = true;
@@ -164,18 +144,14 @@ public class ACS implements Scheduler {
                     result.addStep(time, next.name(), tier1.view(), tier2.view());
                 }
 
-                // Execute one time unit
                 next.remaining--;
 
-                // Advance the clock
                 time++;
                 used++;
             }
 
-            // Record the execution segment
             result.addSegment(next.name(), runStart, time);
 
-            // Check if the process finished
             if (next.remaining == 0) {
 
                 next.finish = time;
@@ -183,7 +159,6 @@ public class ACS implements Scheduler {
 
             }
 
-            // Otherwise, demote it from Tier 1 to Tier 2
             else if (fromTier1 &&
                     tier1.shouldDemote(next, used, quantum)) {
 
