@@ -17,9 +17,7 @@ public class Process {
     public int tier = 1;           // ACS only: 1 = Round Robin, 2 = Priority
     public int waitingSince = -1;  // ACS only: time the process entered Tier 2 (used for aging)
 
-    /**
-     * TODO Member 4: assign the inputs; remaining = burst; effectivePriority = priority.
-     */
+
     public Process(int id, int arrival, int burst, int priority) {
 
         this.id = id;
