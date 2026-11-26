@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "CPU-Scheduling-Simulator_67cab83b"
+        },
+        {
+            "type": "java",
+            "name": "CPU Scheduling Simulator (GUI)",
+            "request": "launch",
+            "mainClass": "SimulatorApp"
+        },
+        {
+            "type": "java",
+            "name": "CPU Scheduling Simulator (Console)",
+            "request": "launch",
+            "mainClass": "ConsoleMain"
+        }
+    ]
+}
