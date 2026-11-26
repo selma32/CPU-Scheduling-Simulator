@@ -1,30 +1,25 @@
 import java.util.*;
 
-/**
- * OWNER: Member 5 - Test Case 1 from the assignment PDF.
- * Parameters: Q = 3, CS = 0.
- */
+/** OWNER: Member 5 - Test Case 1 from the assignment PDF. Q = 3, CS = 0. */
 public class TestCase1 {
-    public static final int Q = 3, CS = 0;   // TODO Member 5: confirm against the PDF
+    public static final int Q = 3, CS = 0;
 
-    /**
-     * TODO Member 5: return the processes of Test Case 1 (id, arrival, burst, priority) exactly as in the PDF.
-     * Return a NEW list on every call.
-     */
     public static List<Process> processes() {
-        throw new UnsupportedOperationException("TODO Member 5");
+        List<Process> l = new ArrayList<>();
+        l.add(new Process(1, 0, 4, 2));
+        l.add(new Process(2, 1, 7, 3));
+        l.add(new Process(3, 3, 2, 1));
+        return l;
     }
 
-    /**
-     * TODO Member 5: expected ACS finish time of each process, indexed by id - 1 (P1 first),
-     * taken from the results table in the PDF.
-     */
-    public static int[] expectedFinish() {
-        throw new UnsupportedOperationException("TODO Member 5");
-    }
+    /** ACS finish times from the PDF: P1=9, P2=13, P3=8. */
+    public static int[] expectedFinish() { return new int[]{9, 13, 8}; }
 
-    /** TODO Member 5: call TestRunner.check("Test Case 1", processes(), Q, CS, expectedFinish()). */
+    /** SJF (SRTF) finish times, computed by hand: P1=4, P2=13, P3=6. */
+    public static int[] expectedFinishSJF() { return new int[]{4, 13, 6}; }
+
     public static void main(String[] args) {
-        throw new UnsupportedOperationException("TODO Member 5");
+        TestRunner.check("Test Case 1 - ACS", processes(), Q, CS, expectedFinish());
+        TestRunner.check("Test Case 1 - SJF", new SJF(), processes(), Q, CS, expectedFinishSJF(), true);
     }
 }
